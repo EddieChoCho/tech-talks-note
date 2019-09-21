@@ -15,8 +15,22 @@
   * Since HBase is used as persistent store in Line Messaging, the response time of HBase is important.
 
 ### How to collect garbage
-#### 1. Finding garbage (non referenced objects)
-  * Mark (Mark-compact algorithm)
+#### 1. Finding garbage (Mark: to identify all live (reachable) objects)
+* First, Garbage Collection algorithm defines some specific objects as Garbage Collection Roots (GC Roots)[1]. For example:
+     * Local variable and input parameters of the currently executing methods
+     * Active threads
+     * Static field of the loaded classes
+     * JNI references
+ 
+![alt text](https://iq.opengenus.org/content/images/2018/05/gc_mark.png)
+
+* Key points regarding the marking phase are[1]:
+    * When the application threads are temporarily stopped so that the JVM can indulge in housekeeping activities is called a safe point resulting in a Stop The World pause.
+    * Safe points can be triggered for different reasons but garbage collection is by far the most common reason for a safe point to be introduced.
+    * The duration of this pause does not depend on the total number of objects in heap nor or the size of the heap
+    * The duration of this pause depends on the number of alive objects.
+    * Increasing the size of the heap does not directly affect the duration of the marking phase.
+ 
 #### 2. Collect garbage, and defrag heep space.
 ##### 2-1. Sweep/Compaction: Remove and defrag
 ![alt text](https://iq.opengenus.org/content/images/2018/05/gc_compact.png)
@@ -65,4 +79,4 @@ STW duration depends on algorithm:
 ## Applying ZGC to production HBase
 
 ## Further reading
-* [Memory Management in Java: Mark Sweep Compact Copy algorithm](https://iq.opengenus.org/memory-management-in-java-mark-sweep-compact-copy/)
+* [1] [Memory Management in Java: Mark Sweep Compact Copy algorithm](https://iq.opengenus.org/memory-management-in-java-mark-sweep-compact-copy/)
