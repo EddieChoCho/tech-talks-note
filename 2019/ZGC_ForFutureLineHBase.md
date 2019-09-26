@@ -80,3 +80,4 @@ STW duration depends on algorithm:
 
 ## Further reading
 * [1] [Memory Management in Java: Mark Sweep Compact Copy algorithm](https://iq.opengenus.org/memory-management-in-java-mark-sweep-compact-copy/)
+* [2] [Memory Management in Java: Garbage Collection Tuning and Optimization](https://iq.opengenus.org/memory-management-in-java-garbage-collection-tuning-and-optimization/)
