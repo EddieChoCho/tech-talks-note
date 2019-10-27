@@ -61,8 +61,9 @@ synchronized void hoge3(){
     assert data == 42;
 }  
 ```
+* synchronized keyword keeps the happened-before relationship
 * synchronized keyword give us the guarantee that stuff happens in a synchronized method could be viewed by another synchronized method
-* Warning: If hoge3 is executed first, the above**** code will deadlock
+* Warning: If hoge3 is executed first, the above code will deadlock
 
 ### Modern JMM Keywords
 * synchronized
@@ -80,15 +81,16 @@ volatile boolean ready = false;
 
 void hoge4(){
     data = 42; 
-    ready = true; //volatile supports the happened-before relation ship, so this line of code will be executed after [data = 42;]. 
+    ready = true; //volatile supports the happened-before relationship, so this line of code will be executed after [data = 42;]. 
 }
 
 synchronized void hoge3(){
     while(!ready){};
-    assert data == 42;//volatile supports the happened-before relation ship, so this line of code will be executed after "ready" becomes to true.
+    assert data == 42; //volatile supports the happened-before relationship, so this line of code will be executed after "ready" becomes to true.
 } 
 ```
 * ~~Warning: If hoge3 is executed first, the aboce code will deadlock~~
+* [volatile v.s. synchronization](https://github.com/EddieChoCho/tech_notes/blob/master/Java/Concurrency.md#volatile-vs-synchronization)
 
 #### volatile != atomic
 ```
@@ -165,13 +167,77 @@ ldr         ip, [ip]    ;   (poll_return)
 ```
 
 ### Long Value Issue Example
-* TBD (solution: volatile)
+```
+static long val = 0;
+public static void main(String[] args){
+    new Thread(() -> {while(true) val = -1L;}).start();
+    new Thread(() -> {while(true) val =  0L;}).start();
+    while(true){
+        long temp = val;
+        if(temp != -1 && temp != 0){
+            System.out.println("temp (DEC): " + temp);
+            System.out.println("temp (BIN): " + Long.toBinaryString(temp));
+            System.exit(-1);
+        }
+    }
+}
+```
+* Solution: static `volatile` long val = 0;
+* You could get atomicity (for simple assignments and returns) if you use the volatile keyword when defining a long or double variable
 ### Object Initialization Issue Example
-* TBD (solution: final)
-### Loop Issue Example
-* TBD (solution: volatile)
-* Server compiler works differently from client compiler
+```
+public class ObjInit {
+    static ObjInit globalRef = new ObjInit();
+    long number;
+    public ObjInit(){
+        number = 42;
+    }
 
+    public static void main(String[] args){
+        new Thread(() -> {
+            while(true) {
+                long temp = globalRef.number;
+                if(temp != 42){
+                    System.out.println(temp);
+                    System.exit(-1);
+                }
+            }
+        }).start();
+        new Thread(() -> {while(true) globalRef = new ObjInit();}).start();
+}}
+```
+* Since another thread might read the number field before the object's constructor is finished. The condition of checking "if(temp != 42)" might be satisfied.
+* If we add the `final` keyword to the number field, then we could keep the happened-before relationship, 
+and the reader method will be guaranteed to see the properly initialized value of "number". 
+### Loop Issue Example
+```
+public class Loop extends Thread {
+    static boolean done = false;
+    public static void main(String[] args){
+        Thread childThread = new Loop();
+        childThread.start();
+        System.out.println("Starting loop");
+        spinWait();
+        System.out.println("Exited loop");
+    }
+    
+    private static void spinWait(){
+        while(!done);
+    }
+    
+    public void run(){
+        try{
+            Thread.sleep(5 * 1000);
+        } catch(Exception e) {}
+        done = true;
+    }
+}
+```
+* Since the field "done" do not have the `volatile` keyword, JVM will only read it once and assume it will not be change.
+* To fix the code, we need to add the `volatile` keyword to the field "done". 
+If we declare "done" to be volatile, as soon as a write occurs for that field, all reads will see the change. 
+* Server compiler works differently from client compiler
+* TODO: check bytecode
 ## Avoid low-level API
 | Abstract  |                          |
 | ----------|------------------------- |
@@ -187,14 +253,19 @@ ldr         ip, [ip]    ;   (poll_return)
     * Same hardware
     * Same JRE(including version)
     * Same settings
+* As much variety as possible
+	* Various hardware
+	* Various JREs(including version)
+	* Various setting
 
 ## Summary
 * Avoid low-level APIs
 * Code against the standard, not the implementation
-* Testing is always indispensible
+* Testing is always indispensable
 * Must read Java Concurrency in Practice(JCiP) 
 
 
 ## Further Readings
+* [Java Concurrency, A(nother) Peek under the Hood (Youtube)](https://youtu.be/s-b1HxY1DC0)
 * [Java Language Specification: Chapter 17. Threads and Locks](https://docs.oracle.com/javase/specs/jls/se11/html/jls-17.html)
 * [Java Concurrency in Practice](https://www.tenlong.com.tw/products/9780321349606)
