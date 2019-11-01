@@ -15,6 +15,7 @@ TWJUG x Oracle Groundbreakers 2019
 * Definition 2
     * Clarify what multithreaded behavior developers may depend on
     * Limits what types of optimizations the runtime may do
+* TBD
     
 ### Memory Ordering
 * TBD
@@ -109,15 +110,17 @@ int incID(){
 * Reads and Writes to long and double values may not happen atomically
 * Possible to read a mix of two different writes
 
-### Happened-before
+### [Happened-before](https://en.wikipedia.org/wiki/Happened-before)
+* In Java specifically, a happens-before relationship is a guarantee that memory written to by statement A is visible to statement B, that is, that statement A completes its write before statement B starts its read.
 * Monitor (acquisition/release)
 * Volatile (read/write)
 * final "freeze" (constructor)
-* JNI
+* [JNI](https://en.wikipedia.org/wiki/Java_Native_Interface)
     * System.out.println ()
     * Input/Output
 * thread start()/join()
 * operations on j.u.concurrent collections
+* TBD 
 
 ### Var Handles 
 * Lower-level than volatile/final
