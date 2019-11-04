@@ -2,6 +2,7 @@
 A leisure study journey from 2017 to 2019
 
 ### Speaker: Eddie Cho
+2019/11/12
 
 ### Why I like to giving this talk
 * The gap between concept and practices
@@ -88,14 +89,25 @@ A leisure study journey from 2017 to 2019
 ### Microservice + Event Sourcing
 * TBD
 #### Microservice + Event Sourcing: Async Communication [5,6]
+* Issues of communications with services through http request
+    * Tight coupling, services need to know each other, need know how to communicate with each other.
+    * Resilience Issue, multiple points of failures, if one of the services is crashed, user could not make the request anymore.
+    * The more services were want through by the request, the longer response time will be.
+    
+* Event-Driven + Asynchronous Communication + Server Push
+    * Shorter response time could be gained by separating the command and the query to two request.
+    * Loose coupling, services do not communicate to each other, they just need to communicate with the event bus(message queue).  
+    * Resilience, user can still make requests if some of the services are crashed(not the entry one).
+    * Server push could provide better user experience without wasting resources.  
+    
 #### Microservice + Event Sourcing: CQRS [5,6,8]
 #### Microservice + Event Sourcing: Transaction [8]
 * Monolithic service + RDBMS
-    * ACID, 2PC 
+    * ACID
 * Saga Pattern
     * Avoid Distributed Transaction
     * event driven + local transaction
-    * 
+    * TBD
     
 
 ### References
