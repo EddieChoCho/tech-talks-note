@@ -4,7 +4,7 @@ A leisure study journey from 2017 to 2019
 ### Speaker: Eddie Cho
 2019/11/12
 
-### Why I like to giving this talk
+## Why I like to giving this talk
 * The gap between concept and practices
     * Which are the good examples/documents I could follow?
         * The example/documents provided by experts are not in Java...
@@ -14,20 +14,14 @@ A leisure study journey from 2017 to 2019
 * Fragmented study time
 * I spent much more time than I thought to fill the gap.
 
-### Core Concepts of Event Sourcing
-#### What is Event Sourcing [1]
+## Core Concepts of Event Sourcing
+### What is Event Sourcing [1]
 * Event 
     * An event is something that has happened in the past.
     * Conceptually, it should be Immutable.
 * Event Sourcing
     * Storing facts.
     * Reading information from the facts for different perceptions.
-    
-* The Issues of CRUD
-    * The history could be lost
-    * Writing logs is the logic which different from the major business logic.
-        * Could not have single source of truth
-    
 * Event Stream
     * An Event Stream is a sequence of events of the same aggregate.
     * Each event is a fact that had happened, so we do not need extra code to write logs.
@@ -40,6 +34,11 @@ A leisure study journey from 2017 to 2019
     * Allows you to time travel.
     * If the projection process is very time consuming, caching read model might be a good idea.
     * Events are still the single source of truth of the system.
+    
+#### The Issues of CRUD
+* The history could be lost
+* Writing logs logic is different from the major business logic.
+* Logs + data -> Could not have single source of truth
 
 #### Issues could be solved by Event Sourcing [1]
 * No audit log issue, Information would not be lost.
@@ -47,32 +46,56 @@ A leisure study journey from 2017 to 2019
 * Single source of truth
 * Allows you to time travel (Historic states)
 * Easier to analyze and fix bugs.
-* Could keep all data for analysis
+* Could keep all data for analysis    
+
+### Event Sourcing in Practice
+#### How to Define Events
+* Event Storming  (DDD)
 
 #### Different types of Event Store
 * Eventstore.org
-    * TBD 
-* NoSQL Database
-    * TBD
+* NoSQL Database (e.g. MongoDB) [12,13]
+    * Flexible data model 
+    * Not the best option for apps with complex transactions, but we only need the read and create operations for event sourcing.
 * Message Queue
-    * TBD
 * RDBMS
     * Might not be the bast choice 
-* Other options    
+* Other options
 
-### Event Sourcing in Practice
-#### Event Store Design
-* RDBMS Design 1: Op lock with version column [4]
-    * TBD
-* RDBMS Design 2: Id + parent unique constrain
-    * TBD
-* RDBMS Design 2: Id + parent unique constrain
-    * TBD
-##### Questions to Ask When We Design an Event Store
-* What is the size of your domain?
-* What is the existed design of your system?
-* Where does new events come from?
-* How often will events be created?
+#### Event Store Designs (RDBMS)
+* Design 1: Optimistic lock with version column [4]
+    * Aggregate Table							
+
+    |  Column Name  | Column Type |
+    | --------------|-------------|
+    | Id (PK)       | bigint      |
+    | Type          | varchar     |
+    | Version       | bigint      |
+
+    * Event Table
+    
+    |  Column Name  | Column Type |
+    | --------------|-------------|
+    | Aggregste (FK)| bigint      | 
+    | Content       | blob(json)  |
+    | Version       | bigint      |
+
+* Design 2: Id + parent unique constrain
+    * Event Table
+    
+    |  Column Name  | Column Type |
+    | --------------|-------------|
+    | Id (PK)       | bigint      | 
+    | Content       | blob(json)  |
+    | Parent (FK)   | bigint      |
+    
+* Design 3: Use normal columns instead of json 
+
+##### Questions to Ask When We Want to Design/Choose an Event Store
+* What is the size of your domain? => Json v.s. Columns
+* What is the existed design of your system? => RDBMS, NoSQL... 
+* Where does those event come from? => Need Optimistic lock?
+* How often will events be created?  => RDBMS, NoSQL... 
     
 #### Snapshot 
 * Snapshots should not be places in line in the Event Log.[1]
@@ -82,17 +105,32 @@ A leisure study journey from 2017 to 2019
 * You might not need it
 
 #### CQRS [1,2]
-* CQRS is required when we implement Event Sourcing.[1]
-* Event Sourcing is not required when we implement CQRS.[1]
-
+* CQS (Command Query Separation - by Bertrand Meyer)
+    * Command: void return type method, it is allowed to mutate state 
+    * Query: non-void return type. it is not allowed to mutate state
+* CQRS (Command Query Responsibility Segregation)
+	* Command Component 
+	* Query Component
+	
+* Queries are very easy to scale because almost all queries can be eventually consistent.
+* CQRS is required when we implement event sourcing.
+* Event sourcing is not required when we implement CQRS.
 
 ### Microservice + Event Sourcing
-* TBD
+* Caution! These patterns are fit to be implemented with event sourcing. But they also could be implemented isolatedly.
+* Patterns
+    * Event-Driven Async Communication
+    * CQRS
+    * Choreography-based Saga Pattern
+
 #### Microservice + Event Sourcing: Async Communication [5,6]
 * Issues of communications with services through http request
     * Tight coupling, services need to know each other, need know how to communicate with each other.
     * Resilience Issue, multiple points of failures, if one of the services is crashed, user could not make the request anymore.
     * The more services were want through by the request, the longer response time will be.
+
+* Event-Driven [11]
+    * A system(or component) sends event messages to notify other systems(or component) of a change in its domain.
     
 * Event-Driven + Asynchronous Communication + Server Push
     * Shorter response time could be gained by separating the command and the query to two request.
@@ -100,15 +138,16 @@ A leisure study journey from 2017 to 2019
     * Resilience, user can still make requests if some of the services are crashed(not the entry one).
     * Server push could provide better user experience without wasting resources.  
     
-#### Microservice + Event Sourcing: CQRS [5,6,8]
+#### Microservice + Event Sourcing: CQRS [5,6,8,10]
+* CQRS allows you to separate the load from reads and writes allowing you to scale each independently.[10]
+
 #### Microservice + Event Sourcing: Transaction [8]
 * Monolithic service + RDBMS
     * ACID
 * Saga Pattern
     * Avoid Distributed Transaction
-    * event driven + local transaction
-    * TBD
-    
+    * Event driven + local transactions
+    * Event sourcing -> no need for rollback.
 
 ### References
 * [1][Greg Young - CQRS and Event Sourcing](https://youtu.be/JHGkaShoyNs)
@@ -120,3 +159,8 @@ A leisure study journey from 2017 to 2019
 * [7][Event Sourcing in Practice - Benjamin Reitzammer & Johannes Seitz]()
 * [8][Microservice Patterns - Saga Pattern by Chris Richardson](https://ookami86.github.io/event-sourcing-in-practice/)
 * [9][Episode 370: Chris Richardson on Microservice Patterns](https://www.se-radio.net/2019/06/episode-370-chris-richardson-on-microservice-patterns/)
+* [10][CQRS - Martin Fowler](https://martinfowler.com/bliki/CQRS.html)
+* [11][What do you mean by “Event-Driven”? - Martin Fowler](https://martinfowler.com/articles/201701-event-driven.html)
+* [12][MongoDB and MySQL Compared](https://www.mongodb.com/compare/mongodb-mysql)
+* [13][MongoDB vs MySQL Comparison: Which Database is Better?](https://hackernoon.com/mongodb-vs-mysql-comparison-which-database-is-better-e714b699c38b)
+* [14][Event Store](https://eventstore.org/)
