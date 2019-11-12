@@ -4,7 +4,7 @@ A leisure study journey from 2017 to 2019
 ### Speaker: Eddie Cho
 2019/11/12
 
-## Why I like to giving this talk
+## Why I like to give this talk
 * The gap between concept and practices
     * Which are the good examples/documents I could follow?
         * The example/documents provided by experts are not in Java...
@@ -116,14 +116,15 @@ A leisure study journey from 2017 to 2019
 * CQRS is required when we implement event sourcing.
 * Event sourcing is not required when we implement CQRS.
 
-### Microservice + Event Sourcing
+### Event Sourcing + Microservice
+
 * Caution! These patterns are fit to be implemented with event sourcing. But they also could be implemented isolatedly.
 * Patterns
     * Event-Driven Async Communication
     * CQRS
     * Choreography-based Saga Pattern
 
-#### Microservice + Event Sourcing: Async Communication [5,6]
+#### Event Sourcing + Microservice: Async Communication [5,6]
 * Issues of communications with services through http request
     * Tight coupling, services need to know each other, need know how to communicate with each other.
     * Resilience Issue, multiple points of failures, if one of the services is crashed, user could not make the request anymore.
@@ -138,16 +139,20 @@ A leisure study journey from 2017 to 2019
     * Resilience, user can still make requests if some of the services are crashed(not the entry one).
     * Server push could provide better user experience without wasting resources.  
     
-#### Microservice + Event Sourcing: CQRS [5,6,8,10]
+#### Event Sourcing + Microservice: CQRS [5,6,8,10]
 * CQRS allows you to separate the load from reads and writes allowing you to scale each independently.[10]
 
-#### Microservice + Event Sourcing: Transaction [8]
+#### Event Sourcing + Microservice: Transaction [8]
 * Monolithic service + RDBMS
     * ACID
+* Distribute transaction, Two-phase commit protocol
+    * Synchronous communication 
+    * Resilience issue, Multiple points of failures.
+    * Response time issue
 * Saga Pattern
     * Avoid Distributed Transaction
     * Event driven + local transactions
-    * Event sourcing -> no need for rollback.
+    * Event sourcing -> no need for rollback, just add an event to the event store atomically.
 
 ### References
 * [1][Greg Young - CQRS and Event Sourcing](https://youtu.be/JHGkaShoyNs)
@@ -164,3 +169,4 @@ A leisure study journey from 2017 to 2019
 * [12][MongoDB and MySQL Compared](https://www.mongodb.com/compare/mongodb-mysql)
 * [13][MongoDB vs MySQL Comparison: Which Database is Better?](https://hackernoon.com/mongodb-vs-mysql-comparison-which-database-is-better-e714b699c38b)
 * [14][Event Store](https://eventstore.org/)
+* [15][Greg Young — A Decade of DDD, CQRS, Event Sourcing](https://youtu.be/LDW0QWie21s)
