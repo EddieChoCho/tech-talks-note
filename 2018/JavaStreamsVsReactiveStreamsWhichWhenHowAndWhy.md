@@ -40,11 +40,28 @@
 
 ### Dataflow Computing
 
-e.g. serverless
+* e.g. Serverless
+* It builds on functional composition and lazy evaluation and takes the abstraction event further.
 
-It builds on functional composition and lazy evaluation and takes the abstraction event further.
+### Java Stream v.s. Reactive Stream
 
-Java Stream v.s. Reactive Stream
+| Java Stream                   | Reactive Stream                                                     | 
+| ----------------------------- | ------------------------------------------------------------------- | 
+| Pipeline                      | Pipeline                                                            | 
+| Push data                     | Push data                                                           | 
+| Lazy evaluation               | Lazy evaluation                                                     | 
+| Zero, one or more data        | Zero, one or more data                                              | 
+| One channel for data          | 3 channel(data, error, complete)                                    | 
+| Hard to handle the exceptions | Error is like data, it will be deal with downstream(circuit breaks) | 
+| Sequential v.s. Parallel      | Sync v.s. Async, Nonblocking backpressure                           |
+| Single pipeline               | Multiple subscribers(share or not)                                  |
 
-//TBD...
+| Reactive Stream API | Java 9 Reactive Stream API |
+| ------------------- | -------------------------- |
+| Publisher           | Publisher                  |
+| Subscriber          | Subscriber                 |
+| Subscription        | Subscription               |
+| Processor           | Processor                  |
 
+## References
+* [Java Streams vs Reactive Streams: Which, When, How, and Why? by Venkat Subramaniam](https://youtu.be/kG2SEcl1aMM)
