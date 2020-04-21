@@ -30,13 +30,13 @@ mvn. om.github.ekryd.echo-maven-plugin:echo-maven-plugin:1.2.0:echo -Decho.messa
 		- direct in the current POM. Las found wins (closest).
 		- direct in the parent hierarchy.
 		- transitive in the hierarchy based on number of hopes to reach it. First found wins.
-	* You can check the dependencies with: mvn dependnecny: tree
+	* You can check the dependencies with: mvn dependency: tree
 
 * Bobert Scholte: Maven never looks to the version, but always to the location in the tree. With the huge dependency trees nowadays i think we should reconsider this in a future major release of Maven. There are enforcer rules to protect you.
 * The solution in the meantime
 	* Apply maven enforcer plug-in - It will let you know if there is a conflict. It can also force specific versions.
 		* If there is a conflict, the build will failed fast which help you to find the issue in the earlier stage.
-	* Apply the dependencyManagement block - The definition is saying that I want to consum a version of one. No matter where the maven is going to find any dependency graph. But if it does, it better be the version which set in the dependencyManagement block
+	* Apply the dependencyManagement block - The definition is saying that I want to consum a version of one. No matter where the maven is going to find any dependency graph. But if it does, it better be the version which set in the dependencyManagement block.
 
 ## Do not mvn clean install - Should invoke mvn verify instead.
 * Mvn verify
