@@ -113,5 +113,6 @@
 * [Evolving the Go Memory Manager's RAM and CPU Efficiency](https://youtu.be/S_1YfTfuWmo)
 * [Tcmalloc](https://google.github.io/tcmalloc/design.html)
 * [GC in go](https://slides.com/jalex-chang/gc-in-go)
+* [Go memory allocation and deallocation | COSCUP x RubyConfTW 2021](https://youtu.be/Zbu0KM18bQE)
 * https://hackmd.io/@coscup/HyHyr6PR_/%2F%40coscup%2FH1FpVTvA_
 

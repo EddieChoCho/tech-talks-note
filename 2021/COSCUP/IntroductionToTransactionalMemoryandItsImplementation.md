@@ -132,4 +132,5 @@
 * [STM-Toy](https://github.com/reborn2266/STM-Toy)
 * [x86 RTM manual]
 * [GCC TM Tutorial]
+* [Introduction to Transactional Memory and Its Implementation | COSCUP x RubyConfTW 2021](https://youtu.be/7qD6KwGU8zs)
 * https://hackmd.io/@coscup/ryHfQ6vAu/%2F%40coscup%2FHkDJm6PAd
